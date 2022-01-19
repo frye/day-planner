@@ -55,6 +55,7 @@ var newTimeBlock = function (blockHour) {
 }
 
 var clickHandler = function(event) {
+    // Save the text from the textarea inside the current time-block. Use the hour as a key.
     localStorage.setItem(event.delegateTarget.children[0].innerText, event.delegateTarget.children[1].value)
 }
 
@@ -62,4 +63,5 @@ for (var i = workDayFisrtH; i<= workDayLastH; i++) {
     blockContainer.append(newTimeBlock(i));
 }
 
+// Set up the click handler on the time-block and use delegation.
 $('section').on('click', 'button', clickHandler);
