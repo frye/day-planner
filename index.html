@@ -31,12 +31,12 @@
     </header>
     <div class="container">
       <!-- Timeblocks go here -->
-      <!-- Below section was used to play with the layout for single row.  
-        <section class="row time-block">
-        <time class="col-2 hour">00:00</time>
-        <input class="col-8 past" type="text" />
-        <button type="button" class="saveBtn col-2">Save</button>
-      </section> -->
+      <!-- Navigation buttons and currently worked day.-->
+        <section class="row time-block day-navigation">
+        <button class="saveBtn prevBtn col-2">Prev</button>
+        <p class="col-8 past workedDay" type="text" readonly></p>
+        <button type="button" class="saveBtn col-2 nextBtn">Next</button>
+      </section>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

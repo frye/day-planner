@@ -30,6 +30,10 @@ textarea {
   border-radius: 15px;
 }
 
+.day-navigation {
+  margin-bottom: 20px;
+}
+
 .row {
   white-space: pre-wrap;
   height: 80px;
@@ -68,4 +72,23 @@ textarea {
 .saveBtn:hover {
   font-size: 20px;
   transition: all 0.3s ease-in-out;
+}
+
+.prevBtn {
+  border-right: 1px solid black;
+  border-radius: 0px;
+  border-left: none;
+  border-bottom-left-radius: 15px;
+  border-top-left-radius: 15px;
+  background-color: #efefef;
+  color: black;
+}
+
+.nextBtn {
+  background-color: #efefef;
+  color: black;
+}
+
+.workedDay {
+  color: black;
 }
