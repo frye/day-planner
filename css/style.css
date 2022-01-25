@@ -79,6 +79,10 @@ p {
   transition: all 0.3s ease-in-out;
 }
 
+.saveBtn:hover svg {
+  transform: scale(1.2);
+}
+
 .prevBtn {
   border-right: 1px solid black;
   border-radius: 0px;
@@ -92,6 +96,10 @@ p {
 .nextBtn {
   background-color: #efefef;
   color: black;
+}
+
+.custom-button {
+  background-color: #efefef;
 }
 
 .workedDay {

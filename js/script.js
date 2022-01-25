@@ -69,13 +69,11 @@ var clickHandler = function (event) {
 var prevHandler = function() {
     workedDate.subtract(1, 'days'); 
     updateWorkedDay();
-    updateDayTasks();
 }
 
 var nextHandler = function() {
     workedDate.add(1, 'days');
     updateWorkedDay();
-    updateDayTasks();
 }
 
 var clearHandler = function() {
@@ -88,8 +86,14 @@ var clearHandler = function() {
     }
 }
 
+var todayHandler = function() {
+    workedDate = moment();
+    updateWorkedDay();
+}
+
 var updateWorkedDay = function() {
     $('.workedDay').text(workedDate.format('dddd, MMM Do'));
+    updateDayTasks();
 }
 
 var updateDayTasks = function () {
@@ -123,7 +127,7 @@ var init = function () {
 
     // Create working header
 
-    updateWorkedDay();
+    $('.workedDay').text(workedDate.format('dddd, MMM Do'));
 
     for (var i = workDayFisrtH; i <= workDayLastH; i++) {
         blockContainer.append(newTimeBlock(i));
@@ -133,6 +137,7 @@ var init = function () {
     $('.prevBtn').on('click', prevHandler);
     $('.nextBtn').on('click', nextHandler);
     $('.clearButton').on('click', clearHandler);
+    $('.todayButton').on('click', todayHandler);
 }
 
 // Set up the click handler on the time-block and use delegation.
