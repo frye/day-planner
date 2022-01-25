@@ -35,7 +35,7 @@ var newTimeBlock = function (blockHour) {
     }
 
     // Create the textarea with potentially earlier saved data.
-    blockInput.addClass('col-8');
+    blockInput.addClass('col-8 blocktext');
     if (blockHour < now) {
         blockInput.addClass('past');
     } else if (blockHour === now) {
@@ -61,21 +61,62 @@ var clickHandler = function (event) {
     // Save the text from the textarea inside the current time-block. Use the hour as a key.
     var saveDateTime = workedDate.format('YYYYMMDD') + event.delegateTarget.children[0].innerText;
     console.log(saveDateTime);
-    localStorage.setItem(saveDateTime, event.delegateTarget.children[1].value)
+    localStorage.setItem(saveDateTime, event.delegateTarget.children[1].value);
+    event.delegateTarget.children[1].value = '';
+    updateDayTasks();
 }
 
 var prevHandler = function() {
     workedDate.subtract(1, 'days'); 
     updateWorkedDay();
+    updateDayTasks();
 }
 
 var nextHandler = function() {
     workedDate.add(1, 'days');
     updateWorkedDay();
+    updateDayTasks();
+}
+
+var clearHandler = function() {
+    if(confirm('Clear all saved events from local storage?')) {
+        localStorage.clear();
+        // Empty timeout to make sure the screen refresh takes place. Although spec says local Storage calls should be
+        // synchronous it seems not to be the case. This timeout bypasses the behavior.
+        setTimeout(()=>{}, 0);
+        updateDayTasks();
+    }
 }
 
 var updateWorkedDay = function() {
     $('.workedDay').text(workedDate.format('dddd, MMM Do'));
+}
+
+var updateDayTasks = function () {
+    
+    var rowArray = $('.blocktext');
+    console.log(rowArray);
+    var hour = workDayFisrtH;
+
+    for (var i = 0; i < rowArray.length; i++) { 
+        rowArray[i].value = '';
+        rowArray[i].classList.remove('current', 'past', 'future');
+        getDateTime = workedDate.format('YYYYMMDD') + hour + ':00';
+        console.log(workedDate);
+        eventText = localStorage.getItem(getDateTime) || '';
+        console.log(eventText);
+        if (eventText) {
+            rowArray[i].value = eventText;
+        }
+        if (workedDate.isBefore(moment(), 'hour')) {
+            rowArray[i].classList.add('past');
+        } else if (workedDate.isSame(moment(), 'day') && hour === moment.hour) {
+            rowArray[i].classList.add('present');
+        } else {
+            rowArray[i].classList.add('future');
+        }
+        hour++;
+    }
 }
 
 var init = function () {
@@ -89,8 +130,9 @@ var init = function () {
     }
 
     $('.hour-row').on('click', 'button', clickHandler);
-    $('.prevBtn'). on('click', prevHandler);
-    $('.nextBtn'). on('click', nextHandler);
+    $('.prevBtn').on('click', prevHandler);
+    $('.nextBtn').on('click', nextHandler);
+    $('.clearButton').on('click', clearHandler);
 }
 
 // Set up the click handler on the time-block and use delegation.
