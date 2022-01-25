@@ -60,7 +60,6 @@ var newTimeBlock = function (blockHour) {
 var clickHandler = function (event) {
     // Save the text from the textarea inside the current time-block. Use the hour as a key.
     var saveDateTime = workedDate.format('YYYYMMDD') + event.delegateTarget.children[0].innerText;
-    console.log(saveDateTime);
     localStorage.setItem(saveDateTime, event.delegateTarget.children[1].value);
     event.delegateTarget.children[1].value = '';
     updateDayTasks();
@@ -99,22 +98,19 @@ var updateWorkedDay = function() {
 var updateDayTasks = function () {
     
     var rowArray = $('.blocktext');
-    console.log(rowArray);
     var hour = workDayFisrtH;
 
     for (var i = 0; i < rowArray.length; i++) { 
         rowArray[i].value = '';
-        rowArray[i].classList.remove('current', 'past', 'future');
+        rowArray[i].classList.remove('present', 'past', 'future');
         getDateTime = workedDate.format('YYYYMMDD') + hour + ':00';
-        console.log(workedDate);
         eventText = localStorage.getItem(getDateTime) || '';
-        console.log(eventText);
         if (eventText) {
             rowArray[i].value = eventText;
         }
-        if (workedDate.isBefore(moment(), 'hour')) {
+        if (moment(getDateTime, 'YYYYMMDDhh:mm').isBefore(moment(), 'hour') ) {
             rowArray[i].classList.add('past');
-        } else if (workedDate.isSame(moment(), 'day') && hour === moment.hour) {
+        } else if (workedDate.isSame(moment(), 'day') && hour === moment().hour()) {
             rowArray[i].classList.add('present');
         } else {
             rowArray[i].classList.add('future');
