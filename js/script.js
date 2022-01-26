@@ -4,7 +4,9 @@ const workDayLastH = 17 // Setting the last working hour to start at 5PM
 var blockContainer = $('.container');
 
 // Format and display the current date in the hero section.
+//var currentDate = moment().format('YYYYMMDD');
 var currentDate = moment().format('dddd, MMM Do');
+var workedDate = moment();
 $('#currentDay').text(currentDate);
 
 var now = moment().hour(); //hardcoded below for testing. Swap for real deal.
@@ -19,23 +21,24 @@ var newTimeBlock = function (blockHour) {
     var blockInput = $('<textarea>');
     var blockButton = $('<button>');
 
-    blockSection.addClass('row time-block');
+    blockSection.addClass('row time-block hour-row');
 
     // Set the time field
     blockTime.text(blockHour + ':00');
     blockTime.addClass('col-2 hour');
 
     // Check localStorage for saved content for the hour in question
-    eventText = localStorage.getItem(blockTime.text()) || '';
+    getDateTime = workedDate.format('YYYYMMDD') + blockHour + ':00';
+    eventText = localStorage.getItem(getDateTime) || '';
     if (eventText) {
         blockInput.text(eventText);
     }
 
     // Create the textarea with potentially earlier saved data.
-    blockInput.addClass('col-8');
-    if ( blockHour < now ) {
+    blockInput.addClass('col-8 blocktext');
+    if (blockHour < now) {
         blockInput.addClass('past');
-    } else if ( blockHour === now ) {
+    } else if (blockHour === now) {
         blockInput.addClass('present');
     } else {
         blockInput.addClass('future');
@@ -54,14 +57,85 @@ var newTimeBlock = function (blockHour) {
     return blockSection;
 }
 
-var clickHandler = function(event) {
+var clickHandler = function (event) {
     // Save the text from the textarea inside the current time-block. Use the hour as a key.
-    localStorage.setItem(event.delegateTarget.children[0].innerText, event.delegateTarget.children[1].value)
+    var saveDateTime = workedDate.format('YYYYMMDD') + event.delegateTarget.children[0].innerText;
+    localStorage.setItem(saveDateTime, event.delegateTarget.children[1].value);
+    event.delegateTarget.children[1].value = '';
+    updateDayTasks();
 }
 
-for (var i = workDayFisrtH; i<= workDayLastH; i++) {
-    blockContainer.append(newTimeBlock(i));
+var prevHandler = function() {
+    workedDate.subtract(1, 'days'); 
+    updateWorkedDay();
+}
+
+var nextHandler = function() {
+    workedDate.add(1, 'days');
+    updateWorkedDay();
+}
+
+var clearHandler = function() {
+    if(confirm('Clear all saved events from local storage?')) {
+        localStorage.clear();
+        // Empty timeout to make sure the screen refresh takes place. Although spec says local Storage calls should be
+        // synchronous it seems not to be the case. This timeout bypasses the behavior.
+        setTimeout(()=>{}, 0);
+        updateDayTasks();
+    }
+}
+
+var todayHandler = function() {
+    workedDate = moment();
+    updateWorkedDay();
+}
+
+var updateWorkedDay = function() {
+    $('.workedDay').text(workedDate.format('dddd, MMM Do'));
+    updateDayTasks();
+}
+
+var updateDayTasks = function () {
+    
+    var rowArray = $('.blocktext');
+    var hour = workDayFisrtH;
+
+    for (var i = 0; i < rowArray.length; i++) { 
+        rowArray[i].value = '';
+        rowArray[i].classList.remove('present', 'past', 'future');
+        getDateTime = workedDate.format('YYYYMMDD') + hour + ':00';
+        eventText = localStorage.getItem(getDateTime) || '';
+        if (eventText) {
+            rowArray[i].value = eventText;
+        }
+        if (moment(getDateTime, 'YYYYMMDDhh:mm').isBefore(moment(), 'hour') ) {
+            rowArray[i].classList.add('past');
+        } else if (workedDate.isSame(moment(), 'day') && hour === moment().hour()) {
+            rowArray[i].classList.add('present');
+        } else {
+            rowArray[i].classList.add('future');
+        }
+        hour++;
+    }
+}
+
+var init = function () {
+
+    // Create working header
+
+    $('.workedDay').text(workedDate.format('dddd, MMM Do'));
+
+    for (var i = workDayFisrtH; i <= workDayLastH; i++) {
+        blockContainer.append(newTimeBlock(i));
+    }
+
+    $('.hour-row').on('click', 'button', clickHandler);
+    $('.prevBtn').on('click', prevHandler);
+    $('.nextBtn').on('click', nextHandler);
+    $('.clearButton').on('click', clearHandler);
+    $('.todayButton').on('click', todayHandler);
 }
 
 // Set up the click handler on the time-block and use delegation.
-$('section').on('click', 'button', clickHandler);
+
+init();
