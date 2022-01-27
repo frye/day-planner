@@ -13,4 +13,4 @@ Following GIF shows a high level oveview of the features.
 
 
 ## Links
-The GitHub pages hosted version of the quiz is [here](https://frye.github.io/day-planner/).
+The GitHub pages hosted version of the day planner is [here](https://frye.github.io/day-planner/).
