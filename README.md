@@ -11,6 +11,13 @@ Following GIF shows a high level oveview of the features.
 
 ![Day planner](./screenshot.png)
 
+## Technologies
+- HTML
+- CSS
+- Javascript
+- Bootstrap
+- jQuery
+- moment.js
 
 ## Links
 The GitHub pages hosted version of the day planner is [here](https://frye.github.io/day-planner/).
